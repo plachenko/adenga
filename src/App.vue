@@ -78,8 +78,6 @@ export default class App extends Vue {
   }
 
   public addItem(){
-    // this.itemInp.time = 
-
     const _item: any = Object.assign({}, this.itemInp);
 
     for(let i = 0; i <= 40; i++){
@@ -87,8 +85,8 @@ export default class App extends Vue {
     }
   }
 
-  public remItem(){
-    console.log('removing');
+  public remItem(i: number){
+    this.items.splice(i, 0);
   }
 }
 </script>
