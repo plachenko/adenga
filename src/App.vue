@@ -21,9 +21,13 @@
 
       <div class="box" id="agendaBody">
         <!-- item widget -->
-        <div class="agendaItem" @click="current = idx" :class="{'current': idx == current}" v-for="(item, idx) in itemsRev" :key="idx">
-          <span>{{item.title}}</span>
-          <span>{{item.time}}</span>
+        <div class="agendaItem" @click="current = idx" :class="{'current': idx == current, 'done': idx > current}" v-for="(item, idx) in itemsRev" :key="idx">
+          <div style="z-index: 9999; position: relative;">
+            <span class="title">{{item.title}}</span>
+            <span class="time">{{item.time}} {{item.time == 1 ? 'minute' : 'minutes'}}</span>
+            <span class="date time">{{item.date}}</span>
+          </div>
+          <div ref="ticker" class="ticker" v-if="idx == current"></div>
         </div>
       </div>
     </div>
@@ -41,7 +45,7 @@ import moment from 'moment';
 export default class App extends Vue {
   private itemInp = {
     title: '',
-    time: 0
+    time: 1
   }
   private items: any = [];
   private current = 20;
@@ -51,6 +55,8 @@ export default class App extends Vue {
     start: new Date(),
     end: new Date()
   };
+  private d: any;
+  private i = 0;
 
   get itemsRev(){
     return this.items.slice().reverse();
@@ -60,28 +66,31 @@ export default class App extends Vue {
     return moment(this.timer).format('hh:mm:ss A');
   }
 
-  get endTime(){
-    return moment(this.timeObj.end).format('HH:mm')
-  }
-
   get startTime(){
     return moment(this.timeObj.start).format('HH:mm')
   }
 
   mounted(){
+    this.d = moment(this.timeObj.start);
     this.tick = setInterval(() => this.timeTick(), 1000);
   }
 
   public timeTick(){
+    this.i ++;
     this.timer = new Date();
+    const diff = this.d.diff(this.timeObj.start, 's');
+
+    if(this.$refs.ticker){
+      this.$refs.ticker[0].style.width = Math.round((this.i/diff) * window.innerWidth) + "px";
+    }
+
   }
 
   public addItem(){
     const _item: any = Object.assign({}, this.itemInp);
+    _item.date = this.d.add(_item.time, 'm').format('hh:mm');
 
-    for(let i = 0; i <= 40; i++){
-      this.items.push(_item);
-    }
+    this.items.push(_item);
   }
 
   public remItem(i: number){
@@ -155,10 +164,36 @@ html, body{
         border-bottom: 1px solid;
         padding: 10px;
         min-height: 20px;
+        position: relative;
+        }
+      #agendaBody .done{
+        background-color:#ccc;
+        color:#999;
         }
       #agendaBody .current{
         position: sticky;
         bottom: 0px;
+        top: 0px;
         background-color:#F00;
-      }
+        }
+      #agendaBody .date{
+        color:#222 !important;
+        font-weight: bold;
+        }
+      #agendaBody .time{
+        color:#666;
+        width: 100px;
+        text-align: right;
+        display: inline-block;
+        float: right;
+        }
+
+      .ticker{
+        width: 90px;
+        height: 100%;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        background-color:#F0F;
+        }
 </style>
