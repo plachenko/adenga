@@ -2,14 +2,13 @@
   <div id="app">
     <div id="agendaCont">
 
-      <div id="agendaStart" class="box">
-      </div>
-
       <div class="box" id="agendaHeader">
         <h2>{{time}}</h2>
+        <!--
         <form @submit.prevent="setStart">
           <span>started:</span> <input type="time" v-model="startTime">
         </form>
+        -->
       </div>
 
       <div class="box" id="agendaInput">
@@ -92,11 +91,13 @@ export default class App extends Vue {
 </script>
 
 <style>
+*{
+  margin: 0px;
+  padding: 0px;
+}
 html, body{
   width: 100%;
   height: 100%;
-  margin: 0px;
-  padding: 0px;
   }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -121,23 +122,34 @@ html, body{
     #agendaCont .box{
       flex: 1;
       border-bottom: 1px solid;
+      display: flex;
       }
     #agendaHeader{
-      text-align: center;
       max-height: 100px;
+      background-color:#666;
+      color: #FFF;
+      align-items: center;
+      justify-content: center;
       }
 
     #agendaInput{
-      min-height: 90px;
-      max-height: 90px;
+      max-height: 65px;
+      min-height: 65px;
       border-bottom: 1px solid;
       }
       #agendaInput form{
-        height:100%;
+        display: flex;
+        padding: 10px;
         }
+        #agendaInput input{
+          margin: 0px 5px;
+          height: 20px;
+          padding: 10px;
+          }
 
     #agendaBody{
       overflow-y: scroll;
+      flex-flow: column;
       }
       #agendaBody .agendaItem{
         border-bottom: 1px solid;
