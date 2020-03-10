@@ -3,14 +3,15 @@
     <div id="agendaCont">
 
       <div class="box" id="agendaHeader" @click="start">
-        <h2>{{time}}</h2>
-        <!--
-        <form @submit.prevent="setStart">
-          <span>started:</span> <input type="time" v-model="startTime">
-        </form>
-        -->
+        <div style="position: relative; z-index:9999;">
+          <h2>{{time}}</h2>
+        </div>
+        <div class="tickerContainer">
+          <!-- <div ref="ticker" class="ticker" v-if="idx == current"></div> -->
+        </div>
       </div>
 
+      <!--
       <div class="box" id="agendaInput" v-show="adding">
         <form @submit.prevent="addItem">
           <label id="titleInp" for="title" style="position: relative;">
@@ -26,18 +27,18 @@
       </div>
 
       <div class="box" id="agendaBody">
-        <!-- item widget -->
         <div class="agendaItem" @click="current = idx" :class="{'current': idx == current, 'done': idx > current}" v-for="(item, idx) in itemsRev" :key="idx">
           <div style="z-index: 9999; position: relative;">
             <span class="title">{{item.title}}</span>
             <span class="time">{{item.time}} {{item.time == 1 ? 'minute' : 'minutes'}}</span>
-            <span class="date time">{{item.dF}}</span>
+            <span class="date time">{{item.dF}}{{i}}</span>
           </div>
           <div ref="ticker" class="ticker" v-if="idx == current"></div>
         </div>
       </div>
-    </div>
+      -->
 
+    </div>
   </div>
 </template>
 
@@ -57,10 +58,9 @@ export default class App extends Vue {
   private current = 0;
   private timer = new Date();
   private tick: any = null;
-  private timeObj = {
-    start: new Date(),
-    end: new Date()
-  };
+
+  private startTimeDate!: Date;
+
   private d: any;
   private i = 0;
   private adding = true;
@@ -74,22 +74,26 @@ export default class App extends Vue {
   }
 
   get startTime(){
-    return moment(this.timeObj.start).format('HH:mm')
+    return moment(this.startTimeDate).format('HH:mm')
   }
 
   mounted(){
-    this.d = moment(this.timeObj.start);
+    // this.d = moment(this.startTimeDate);
     this.tick = setInterval(() => this.timeTick(), 1000);
   }
 
   public timeTick(){
-    this.i ++;
+    // Main Clock
     this.timer = new Date();
+
+    /*
+    this.i ++;
     const curt = this.items[this.current].time;
     const cur = new Date();
     const diff = moment().diff(this.items[this.current].date, 's') + 57;
     // const diffr = (diff) * (60 / curt);
-    const diffr = diff / (60 * curt);
+    // const diffr = diff / (60 * curt);
+    const diffr = (this.i/10);
     console.log(diff);
     // console.log(diffr);
 
@@ -98,11 +102,18 @@ export default class App extends Vue {
         this.$refs.ticker[0].style.width = (diffr * window.innerWidth) + "px";
       }
     }
-
+    */
   }
 
   public start(){
-    this.timeObj.start = new Date();
+    // On start event record the start time
+    this.startTimeDate = new Date();
+  }
+
+  public end(){
+    // On End event record the end time
+
+    // If tasks are unfinished label as DNF
   }
 
   public addItem(){
@@ -123,11 +134,12 @@ export default class App extends Vue {
 *{
   margin: 0px;
   padding: 0px;
-}
-html, body{
-  width: 100%;
-  height: 100%;
   }
+  html, body{
+    width: 100%;
+    height: 100%;
+    }
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -153,7 +165,9 @@ html, body{
       border-bottom: 1px solid;
       display: flex;
       }
+
     #agendaHeader{
+      position: relative;
       max-height: 100px;
       background-color:#666;
       color: #FFF;
@@ -229,8 +243,15 @@ html, body{
         float: right;
         }
 
+      .tickerContainer{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0px;
+        top: 0px;
+        background-color:#F0F;
+        }
       .ticker{
-        width: 90px;
         height: 100%;
         position: absolute;
         left: 0px;
