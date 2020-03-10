@@ -2,7 +2,7 @@
   <div id="app">
     <div id="agendaCont">
 
-      <div class="box" id="agendaHeader">
+      <div class="box" id="agendaHeader" @click="start">
         <h2>{{time}}</h2>
         <!--
         <form @submit.prevent="setStart">
@@ -11,10 +11,16 @@
         -->
       </div>
 
-      <div class="box" id="agendaInput">
+      <div class="box" id="agendaInput" v-show="adding">
         <form @submit.prevent="addItem">
-          <input v-model="itemInp.title" type="text" placeholder="title">
-          <input v-model="itemInp.time" type="number" min="0" step="1" placeholder="time">
+          <label id="titleInp" for="title" style="position: relative;">
+            <span style="position: absolute; left: 10px; top: -20px;">title</span>
+            <input name="title" autocomplete="off" v-model="itemInp.title" type="text" placeholder="title">
+          </label>
+          <label id="minuteInp" for="title" style="position: relative;">
+            <span style="position: absolute; left: 10px; top: -20px;">mins</span>
+            <input v-model="itemInp.time" type="number" min="0" step="1" placeholder="time">
+          </label>
           <input type="submit" />
         </form>
       </div>
@@ -57,6 +63,7 @@ export default class App extends Vue {
   };
   private d: any;
   private i = 0;
+  private adding = true;
 
   get itemsRev(){
     return this.items.slice().reverse();
@@ -84,6 +91,11 @@ export default class App extends Vue {
       this.$refs.ticker[0].style.width = Math.round((this.i/diff) * window.innerWidth) + "px";
     }
 
+  }
+
+  public start(){
+    console.log('started.')
+    this.timeObj.start = new Date();
   }
 
   public addItem(){
@@ -142,22 +154,43 @@ html, body{
       }
 
     #agendaInput{
-      max-height: 65px;
-      min-height: 65px;
+      max-height: 85px;
+      min-height: 85px;
       border-bottom: 1px solid;
       }
       #agendaInput form{
         display: flex;
-        padding: 10px;
+        flex:1;
+        padding: 30px 10px 20px 10px;
         }
         #agendaInput input{
           margin: 0px 5px;
-          height: 20px;
           padding: 10px;
+          }
+        #agendaInput input[type=submit]{
+          height: 44px;
+        }
+        #agendaInput input[type=text],
+        #agendaInput input[type=number]{
+          height: 20px;
+          }
+        #titleInp{
+          flex:1;
+          display: flex;
+          }
+          #titleInp input{
+            flex:1;
+            height:100%;
+          }
+        #minuteInp{
+          width: 70px
+          }
+        #minuteInp input{
+          width: 40px
           }
 
     #agendaBody{
-      overflow-y: scroll;
+      overflow-y: auto;
       flex-flow: column;
       }
       #agendaBody .agendaItem{
