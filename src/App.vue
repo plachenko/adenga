@@ -31,7 +31,7 @@
           <div style="z-index: 9999; position: relative;">
             <span class="title">{{item.title}}</span>
             <span class="time">{{item.time}} {{item.time == 1 ? 'minute' : 'minutes'}}</span>
-            <span class="date time">{{item.date}}</span>
+            <span class="date time">{{item.dF}}</span>
           </div>
           <div ref="ticker" class="ticker" v-if="idx == current"></div>
         </div>
@@ -54,7 +54,7 @@ export default class App extends Vue {
     time: 1
   }
   private items: any = [];
-  private current = 20;
+  private current = 0;
   private timer = new Date();
   private tick: any = null;
   private timeObj = {
@@ -85,22 +85,30 @@ export default class App extends Vue {
   public timeTick(){
     this.i ++;
     this.timer = new Date();
-    const diff = this.d.diff(this.timeObj.start, 's');
+    const curt = this.items[this.current].time;
+    const cur = new Date();
+    const diff = moment().diff(this.items[this.current].date, 's') + 57;
+    // const diffr = (diff) * (60 / curt);
+    const diffr = diff / (60 * curt);
+    console.log(diff);
+    // console.log(diffr);
 
     if(this.$refs.ticker){
-      this.$refs.ticker[0].style.width = Math.round((this.i/diff) * window.innerWidth) + "px";
+      if(diff >= 0){
+        this.$refs.ticker[0].style.width = (diffr * window.innerWidth) + "px";
+      }
     }
 
   }
 
   public start(){
-    console.log('started.')
     this.timeObj.start = new Date();
   }
 
   public addItem(){
     const _item: any = Object.assign({}, this.itemInp);
-    _item.date = this.d.add(_item.time, 'm').format('hh:mm');
+    _item.date = this.d.add(_item.time, 'm');
+    _item.dF = _item.date.format('hh:mm:ss')
 
     this.items.push(_item);
   }
