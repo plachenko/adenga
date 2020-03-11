@@ -3,15 +3,21 @@
     <div id="agendaCont">
 
       <div class="box" id="agendaHeader" @click="start">
-        <div id="text" style="">
+        <div id="text">
+          <h1>Title extra long and some other words</h1>
           <h2>{{time | time('hh:mm:ss A')}}</h2>
         </div>
-        <div id="ticker" v-if="agenda.tEnd">
-          <div
-            ref="tickerItm"
-            v-for="(i, k) in agenda.items"
-            :key="k" />
+      </div>
+
+      <div id="ticker">
+        <div class="text">
+          <span id="timeStart">{{agenda.tStart | time('hh:mm a')}}</span>
+          <span id="timeEnd">{{agenda.tEnd | time('hh.mm a')}}</span>
         </div>
+        <div
+          ref="tickerItm"
+          v-for="(i, k) in agenda.items"
+          :key="k" />
       </div>
 
       <!--
@@ -28,7 +34,11 @@
           <input type="submit" />
         </form>
       </div>
+      -->
+      <div class="box" id="agendaBody">
 
+      </div>
+      <!--
       <div class="box" id="agendaBody">
         <div class="agendaItem" @click="current = idx" :class="{'current': idx == current, 'done': idx > current}" v-for="(item, idx) in itemsRev" :key="idx">
           <div style="z-index: 9999; position: relative;">
@@ -76,11 +86,14 @@ export default class App extends Vue {
   */
 
   mounted(){
-    for(let i = 0; i < 10; i++){
+    for(let i = 1; i < 10; i++){
       this.agenda.addItem('test', 10);
     }
+
+    this.agenda.tStart = new Date();
     // this.d = moment(this.startTimeDate);
     this.tick = setInterval(() => this.timeTick(), 1000);
+    this.start();
   }
 
   public timeTick(){
@@ -170,31 +183,53 @@ export default class App extends Vue {
 
     #agendaHeader{
       position: relative;
-      max-height: 100px;
       background-color:#666;
       color: #FFF;
-      align-items: center;
       justify-content: center;
+      padding-bottom: 15px;
       }
+      #agendaHeader h1{
+        margin: 10px 0px;
+        }
       #agendaHeader #text{
         position: relative;
         z-index:9999;
+        text-align: center;
         }
-      #agendaHeader #ticker{
-        position: absolute;
+
+      #ticker{
+        flex: 1;
         width: 100%;
-        height: 100%;
-        left: 0px;
-        top: 0px;
+        max-height: 20px;
+        min-height: 20px;
+        background-color:#CCC;
+        position: relative;
         }
-        .tickerContainer div{
+        #ticker .text{
+          width: 100%;
+          position: absolute;
+          z-index: 9999;
+          padding: 0px 5px;
+          top: -20px;
+          border: none;
+          color:#FFF;
+          }
+          #ticker #timeStart{
+            display: block;
+            float: left;
+            }
+          #ticker #timeEnd{
+            display: block;
+            float: right;
+            }
+        #ticker div{
+          box-sizing: border-box;
           float:left;
           color:#000;
           border-right: 2px solid;
-          width: 10px;
+          width: 10%;
           height: 100%;
           position:relative;
-          background-color:#F00;
           }
 
     #agendaInput{
@@ -236,6 +271,7 @@ export default class App extends Vue {
     #agendaBody{
       overflow-y: auto;
       flex-flow: column;
+      flex-basis: 70% !important;
       }
       #agendaBody .agendaItem{
         border-bottom: 1px solid;
