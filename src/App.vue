@@ -3,11 +3,14 @@
     <div id="agendaCont">
 
       <div class="box" id="agendaHeader" @click="start">
-        <div style="position: relative; z-index:9999;">
-          <h2>{{time}}</h2>
+        <div id="text" style="">
+          <h2>{{time | time('hh:mm:ss A')}}</h2>
         </div>
-        <div class="tickerContainer">
-          <!-- <div ref="ticker" class="ticker" v-if="idx == current"></div> -->
+        <div id="ticker" v-if="agenda.tEnd">
+          <div
+            ref="tickerItm"
+            v-for="(i, k) in agenda.items"
+            :key="k" />
         </div>
       </div>
 
@@ -45,21 +48,18 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import moment from 'moment';
+import Agenda from './classes/Agenda';
 
 @Component({
   components: {}
 })
 export default class App extends Vue {
-  private itemInp = {
-    title: '',
-    time: 1
-  }
-  private items: any = [];
-  private current = 0;
-  private timer = new Date();
+  private agenda = new Agenda();
   private tick: any = null;
+  private time = new Date();
+  private current = 0;
 
-  private startTimeDate!: Date;
+  private startTime!: Date;
 
   private d: any;
   private i = 0;
@@ -69,22 +69,23 @@ export default class App extends Vue {
     return this.items.slice().reverse();
   }
 
-  get time(){
-    return moment(this.timer).format('hh:mm:ss A');
-  }
-
+  /*
   get startTime(){
     return moment(this.startTimeDate).format('HH:mm')
   }
+  */
 
   mounted(){
+    for(let i = 0; i < 10; i++){
+      this.agenda.addItem('test', 10);
+    }
     // this.d = moment(this.startTimeDate);
     this.tick = setInterval(() => this.timeTick(), 1000);
   }
 
   public timeTick(){
     // Main Clock
-    this.timer = new Date();
+    this.time = new Date();
 
     /*
     this.i ++;
@@ -107,7 +108,8 @@ export default class App extends Vue {
 
   public start(){
     // On start event record the start time
-    this.startTimeDate = new Date();
+    // this.startTimeDate = new Date();
+    this.startTime = new Date();
   }
 
   public end(){
@@ -174,6 +176,26 @@ export default class App extends Vue {
       align-items: center;
       justify-content: center;
       }
+      #agendaHeader #text{
+        position: relative;
+        z-index:9999;
+        }
+      #agendaHeader #ticker{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0px;
+        top: 0px;
+        }
+        .tickerContainer div{
+          float:left;
+          color:#000;
+          border-right: 2px solid;
+          width: 10px;
+          height: 100%;
+          position:relative;
+          background-color:#F00;
+          }
 
     #agendaInput{
       max-height: 85px;
@@ -243,14 +265,7 @@ export default class App extends Vue {
         float: right;
         }
 
-      .tickerContainer{
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        left: 0px;
-        top: 0px;
-        background-color:#F0F;
-        }
+
       .ticker{
         height: 100%;
         position: absolute;
