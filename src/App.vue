@@ -189,8 +189,14 @@ export default class App extends Vue {
       padding-bottom: 15px;
       }
       #agendaHeader h1{
+        border-bottom: 1px solid;
+        padding: 0px 0px 20px 0px;
         margin: 10px 0px;
         }
+      #agendaHeader h2{
+        padding-top: 0px;
+        font-size: 1.8em;
+      }
       #agendaHeader #text{
         position: relative;
         z-index:9999;
@@ -210,7 +216,7 @@ export default class App extends Vue {
           position: absolute;
           z-index: 9999;
           padding: 0px 5px;
-          top: -20px;
+          top: -25px;
           border: none;
           color:#FFF;
           }
