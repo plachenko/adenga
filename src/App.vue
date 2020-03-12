@@ -36,6 +36,7 @@
       </div>
       -->
       <div class="box" id="agendaBody">
+        <h1 style="color:#CCC">{{msg.data}}</h1>
 
       </div>
       <!--
@@ -56,6 +57,7 @@
 </template>
 
 <script lang="ts">
+import gsap from 'gsap';
 import { Component, Vue } from 'vue-property-decorator';
 import moment from 'moment';
 import Agenda from './classes/Agenda';
@@ -68,6 +70,7 @@ export default class App extends Vue {
   private tick: any = null;
   private time = new Date();
   private current = 0;
+  private msg = "";
 
   private startTime!: Date;
 
@@ -86,6 +89,18 @@ export default class App extends Vue {
   */
 
   mounted(){
+    const socket = new WebSocket('ws://192.168.0.41:8080');
+
+    this.$nextTick(() => {
+      gsap.from('#app', .4, {marginLeft: -100, opacity: 0});
+    });
+
+    socket.addEventListener('message', (e) => {
+      if(e.data == 'exit'){
+        gsap.to('#app', .4, {marginLeft: -100, opacity: 0});
+      }
+    });
+
     for(let i = 1; i < 10; i++){
       this.agenda.addItem('test', 10);
     }
